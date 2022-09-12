@@ -845,6 +845,22 @@ enum StealthIndex : uint8_t {
   }
 #endif // TMC5160
 
+
+#if HAS_DRIVER(TMC2240)
+  template<char AXIS_LETTER, char DRIVER_ID, AxisEnum AXIS_ID>
+  void tmc_init(TMCMarlin<TMC2209Stepper, AXIS_LETTER, DRIVER_ID, AXIS_ID> &st, const uint16_t mA, const uint16_t microsteps, const uint32_t hyb_thrs, const bool stealth, const chopper_timing_t &chop_init, const bool interpolate, float hold_multiplier) {
+   st.GCONF(0x00);
+   st.DRV_CONF(0x03);
+   st.IHOLD_IRUN(0x04071f03);
+   st.CHOPCONF(0x14410153);  //0x14410153
+   st.PWMCONF(0xC40c1e1d);
+   st.GSTAT(0x07);
+   st.GSTAT(0x00); 
+   delay(200);
+  }
+#endif // TMC2240
+
+
 void restore_trinamic_drivers() {
   #if AXIS_IS_TMC(X)
     stepperX.push();
