@@ -289,13 +289,11 @@ class TMCMarlin<TMC2209Stepper, AXIS_LETTER, DRIVER_ID, AXIS_ID> : public TMC220
 template<char AXIS_LETTER, char DRIVER_ID, AxisEnum AXIS_ID>
 class TMCMarlin<TMC2240Stepper, AXIS_LETTER, DRIVER_ID, AXIS_ID> : public TMC2240Stepper, public TMCStorage<AXIS_LETTER, DRIVER_ID> {
   public:
-    TMCMarlin(Stream * SerialPort, const float RS, const uint8_t addr) :
-      TMC2240Stepper(SerialPort, RS, addr)
-      {}
-    TMCMarlin(const uint16_t RX, const uint16_t TX, const float RS, const uint8_t addr) :
-      TMC2240Stepper(RX, TX, RS, addr)
-      {}
+    TMCMarlin(Stream * SerialPort, const uint8_t addr) :TMC2240Stepper(SerialPort,addr){}
+    TMCMarlin(const uint16_t RX, const uint16_t TX, const uint8_t addr) :TMC2240Stepper(RX, TX, addr){}
     uint8_t get_address() { return slave_address; }
+    uint16_t get_microstep_counter() { return TMC2240Stepper::MSCNT(); }
+
     uint16_t rms_current() { return TMC2240Stepper::rms_current(); }
     void rms_current(const uint16_t mA) {
       this->val_mA = mA;
@@ -305,12 +303,11 @@ class TMCMarlin<TMC2240Stepper, AXIS_LETTER, DRIVER_ID, AXIS_ID> : public TMC224
       this->val_mA = mA;
       TMC2240Stepper::rms_current(mA, mult);
     }
-    uint16_t get_microstep_counter() { return TMC2240Stepper::MSCNT(); }
 
     #if HAS_STEALTHCHOP
-      bool get_stealthChop()                { return !this->en_spreadCycle(); }
+      bool get_stealthChop()                { return this->en_pwm_mode(); }
       bool get_stored_stealthChop()         { return this->stored.stealthChop_enabled; }
-      void refresh_stepping_mode()          { this->en_spreadCycle(!this->stored.stealthChop_enabled); }
+      void refresh_stepping_mode()          { this->en_pwm_mode(this->stored.stealthChop_enabled); }
       void set_stealthChop(const bool stch) { this->stored.stealthChop_enabled = stch; refresh_stepping_mode(); }
       bool toggle_stepping_mode()           { set_stealthChop(!this->stored.stealthChop_enabled); return get_stealthChop(); }
     #endif

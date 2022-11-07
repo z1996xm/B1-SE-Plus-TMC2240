@@ -2765,8 +2765,21 @@
    */
   #define INTERPOLATE      true
 
+//******zhou******//
+
+  /**
+   * 0:1A  1:2A  2:3A  3:3A
+   */
+  #define TMC2240_CURRENT_RANGE   2    
+
+  /**
+   * ('rref', 12000, minval=12000, maxval=60000)
+  */     
+  #define TMC2240_Rref            12000
+
+
   #if AXIS_IS_TMC(X)
-    #define X_CURRENT       800        // (mA) RMS current. Multiply by 1.414 for peak current.
+    #define X_CURRENT       400        // (mA) RMS current. Multiply by 1.414 for peak current.
     #define X_CURRENT_HOME  X_CURRENT  // (mA) RMS current for sensorless homing
     #define X_MICROSTEPS     16        // 0..256
     #define X_RSENSE          0.11
